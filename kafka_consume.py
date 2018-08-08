@@ -7,7 +7,7 @@ import copy
 ## KAFKA
 def start_consumer(group_id, consumer_id, topic, **kwargs):
 
-    brokers = os.getenv("KAFKA_HOSTS", "").split(",")
+    brokers = 'localhost:9092'
     default_config = {
         'auto_offset_reset' : 'earliest',
         'enable_auto_commit' : False,

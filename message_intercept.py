@@ -33,7 +33,7 @@ def on_connect(client, userdata, flags, rc):
     print("Connected %s, %s, %s %s" % (client, userdata, flags, rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("weather")
+    client.subscribe("/weather")
 
 def on_disconnect(client, user_data, rc):
     """
@@ -68,7 +68,7 @@ def on_message(client, userdata, msg):
 def mqtt_to_kafka_run():
     """Pick messages off MQTT queue and put them on Kafka"""
 
-    client_name = "home_connector_%s" % os.getenv("HOSTNAME")
+    client_name = "home_connector"
     client = mqtt.Client(client_id=client_name)
 
     client.on_connect = on_connect
@@ -76,7 +76,8 @@ def mqtt_to_kafka_run():
     client.on_disconnect = on_disconnect
 
     # TODO: the queue address should be an env var
-    client.connect("weathermessaging_mqtt_1", 1883, 60)
+    client.username_pw_set('admin', 'admin')
+    client.connect("localhost", 1883, 60)
 
     client.loop_forever()
 
@@ -86,8 +87,7 @@ if __name__ == '__main__':
 
     while attempts < 10:
         try:
-            brokers = os.getenv("KAFKA_HOSTS", "").split(",")
-            producer = KafkaProducer(bootstrap_servers=brokers)
+            producer = KafkaProducer()
             mqtt_to_kafka_run()
 
         # NOTE: this is a KAFKA error

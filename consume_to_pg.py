@@ -57,17 +57,16 @@ if __name__ == '__main__':
         try:
             ## PG
             # FIXME: these should be env vars
-            conn=psycopg2.connect(dbname="weather_iot",
-                                  user="weather_writer",
-                                  host="psql02.thedevranch.net",
-                                  password=os.environ.get('POSTGRES_PASSWD'),
+            conn=psycopg2.connect(dbname="mqtt_to_kafka",
+                                  user="postgres",
+                                  host="localhost",
+                                  password='postgres',
                                   )
             cur = conn.cursor()
 
             ## KAFKA
             consumer_group = "weather_consumer_pg"
-            consumer_device = "weather_consumer_pg_%s" % os.getenv("HOSTNAME",
-                                                                   "001")
+            consumer_device = "weather_consumer_pg_test"
             kafka_topic = "weather"
 
             consumer = kafka_cons.start_consumer(consumer_group,
